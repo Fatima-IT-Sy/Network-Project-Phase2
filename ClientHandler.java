@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 import java.io.*;
 import java.net.*;
 import java.util.List;
@@ -33,38 +30,40 @@ public class ClientHandler implements Runnable {
             cleanUp();
         }
     }
-private void handleProtocol(String request) {
-    String[] parts = request.split(":", 2);
-    String command = parts[0];
 
-    switch (command) {
-        case "LOGIN":
-            String name = (parts.length > 1) ? parts[1] : "Guest";
-            player = new Player(name);
-            GameServer.playerManager.addPlayer(player);
-            
-            GameServer.broadcastGlobal("PLAYERS_LIST:" + GameServer.playerManager.getConnectedNames());
-            break;
+    private void handleProtocol(String request) {
+        String[] parts = request.split(":", 2);
+        String command = parts[0];
 
-        case "PAIR_REQUEST":
-            if (player != null) {
-                GameServer.playerManager.addToWaiting(player);
-  
-                GameServer.broadcastGlobal("ROOM_LIST:" + GameServer.playerManager.getWaitingNames());
-                
-                List<Player> readyPlayers = GameServer.playerManager.tryFormingRoom();
-                if (readyPlayers != null && readyPlayers.size() == 4 ) {
-                    GameServer.broadcastGlobal("GAME_START:Ready to Race!");
+        switch (command) {
+            case "LOGIN":
+                String name = (parts.length > 1) ? parts[1] : "Guest";
+                player = new Player(name);
+                GameServer.playerManager.addPlayer(player);
+
+                GameServer.broadcastGlobal("PLAYERS_LIST:" + GameServer.playerManager.getConnectedNames());
+                break;
+
+            case "PAIR_REQUEST":
+                if (player != null) {
+                    GameServer.playerManager.addToWaiting(player);
+
+                    GameServer.broadcastGlobal("ROOM_LIST:" + GameServer.playerManager.getWaitingNames());
+
+                    List<Player> readyPlayers = GameServer.playerManager.tryFormingRoom();
+                    if (readyPlayers != null && readyPlayers.size() == 4) {
+                        GameServer.broadcastGlobal("GAME_START:Ready to Race!");
+                    }
                 }
-            }
-            break;
+                break;
+        }
     }
-}
-public void sendMessage(String msg) {
-    if (out != null) {
-        out.println(msg);
+
+    public void sendMessage(String msg) {
+        if (out != null) {
+            out.println(msg);
+        }
     }
-}
 
     private void cleanUp() {
         if (player != null) {
@@ -73,6 +72,9 @@ public void sendMessage(String msg) {
             GameServer.broadcastGlobal("ROOM_LIST:" + GameServer.playerManager.getWaitingNames());
         }
         GameServer.removeClient(out);
-        try { socket.close(); } catch (IOException e) {}
+        try {
+            socket.close();
+        } catch (IOException e) {
+        }
     }
 }
