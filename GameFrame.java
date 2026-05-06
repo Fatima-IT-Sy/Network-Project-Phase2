@@ -12,16 +12,16 @@ public class GameFrame extends JFrame implements GameClient.MessageListener {
     private DefaultListModel<String> waitingRoomModel = new DefaultListModel<>();
     private JButton joinBtn;
     private JLabel statusLabel;
-    private JPanel mainPanel; 
-private DefaultListModel<String> scoreBoardModel = new DefaultListModel<>();
+    private JPanel mainPanel;
+    private DefaultListModel<String> scoreBoardModel = new DefaultListModel<>();
 
     public GameFrame(String username) {
-    mainPanel = new JPanel(); 
+        mainPanel = new JPanel();
         setTitle("Cipher Race - Session: " + username);
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        
+
         getContentPane().setBackground(new Color(10, 10, 10));
         setLayout(new BorderLayout(20, 20));
 
@@ -48,14 +48,14 @@ private DefaultListModel<String> scoreBoardModel = new DefaultListModel<>();
         joinBtn.setFocusPainted(false);
         joinBtn.setBorder(BorderFactory.createLineBorder(new Color(0, 255, 65), 1));
         joinBtn.setPreferredSize(new Dimension(0, 50));
-        
+
         JPanel btnPanel = new JPanel(new BorderLayout());
         btnPanel.setOpaque(false);
         btnPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 20, 20));
         btnPanel.add(joinBtn, BorderLayout.CENTER);
         add(btnPanel, BorderLayout.SOUTH);
 
-        client = new GameClient("127.0.0.1", 12345, this);
+        client = new GameClient("localhost", 12345, this);
 
         Timer t = new Timer(500, e -> client.sendMessage("LOGIN:" + username));
         t.setRepeats(false);
@@ -65,7 +65,7 @@ private DefaultListModel<String> scoreBoardModel = new DefaultListModel<>();
             client.sendMessage("PAIR_REQUEST");
             setWaitingMode();
         });
-       
+
     }
 
     private JPanel createListPanel(String title, JList<String> list) {
@@ -81,7 +81,7 @@ private DefaultListModel<String> scoreBoardModel = new DefaultListModel<>();
         list.setForeground(new Color(0, 255, 65));
         list.setFont(new Font("Monospaced", Font.PLAIN, 14));
         list.setSelectionBackground(new Color(0, 60, 0));
-        
+
         JScrollPane scroll = new JScrollPane(list);
         scroll.setBorder(BorderFactory.createLineBorder(new Color(40, 40, 40), 1));
         p.add(scroll, BorderLayout.CENTER);
@@ -96,7 +96,6 @@ private DefaultListModel<String> scoreBoardModel = new DefaultListModel<>();
         statusLabel.setText("MATCHING PROCESS...");
         statusLabel.setForeground(Color.ORANGE);
     }
-    
 
     @Override
     public void onMessageReceived(String msg) {
@@ -111,8 +110,7 @@ private DefaultListModel<String> scoreBoardModel = new DefaultListModel<>();
                         allPlayersModel.addElement("> " + s.trim());
                     }
                 }
-            } 
-            else if (msg.startsWith("ROOM_LIST:")) {
+            } else if (msg.startsWith("ROOM_LIST:")) {
                 waitingRoomModel.clear();
                 String content = msg.substring(10).trim();
                 if (!content.isEmpty()) {
@@ -120,23 +118,23 @@ private DefaultListModel<String> scoreBoardModel = new DefaultListModel<>();
                         waitingRoomModel.addElement("READY: " + s.trim());
                     }
                 }
-            } 
-            else if (msg.startsWith("GAME_START:")) {
+            } else if (msg.startsWith("GAME_START:")) {
                 JOptionPane.showMessageDialog(this, "CONNECTION ESTABLISHED\nDATA: " + msg.split(":")[1]);
             }
         });
     }
+
     public void showGamePanel() {
-        mainPanel.removeAll(); 
+        mainPanel.removeAll();
         mainPanel.setLayout(new BorderLayout());
-        
+
         JLabel startMsg = new JLabel("GAME STARTED! RACE NOW!", JLabel.CENTER);
         startMsg.setForeground(Color.CYAN);
         startMsg.setFont(new Font("Monospaced", Font.BOLD, 20));
-        
+
         mainPanel.add(startMsg, BorderLayout.NORTH);
         mainPanel.add(new JScrollPane(new JList<>(scoreBoardModel)), BorderLayout.CENTER);
-        
+
         statusLabel.setText("RACING...");
         revalidate();
         repaint();

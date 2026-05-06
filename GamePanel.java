@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -13,7 +10,7 @@ public class GamePanel extends JPanel {
         setLayout(new BorderLayout());
         waitingArea.setEditable(false);
         waitingArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
-        
+
         add(statusLabel, BorderLayout.NORTH);
         add(new JScrollPane(waitingArea), BorderLayout.CENTER);
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
